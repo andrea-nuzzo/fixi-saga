@@ -1,0 +1,39 @@
+version: '3.8'
+services:
+  db:
+    image: postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: username
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: dbname
+    networks:
+      - fixi-saga-network
+  pgadmin:
+    image: dpage/pgadmin4
+    ports:
+      - "5050:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@example.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    depends_on:
+      - db
+    networks:
+      - fixi-saga-network
+  server:
+    build: ./fixi-saga-server
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+    environment:
+      - DATABASE_URL=postgres://username:password@db:5432/dbname
+    networks:
+      - fixi-saga-network
+    volumes:
+      - ./fixi-saga-server:/usr/src/app
+
+networks:
+  fixi-saga-network:
+    driver: bridge
