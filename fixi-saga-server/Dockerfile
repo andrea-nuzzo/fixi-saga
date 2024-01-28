@@ -9,6 +9,7 @@ RUN npm install
 
 # Installa ts-node globalmente
 RUN npm install -g ts-node
+RUN npm install -g nodemon
 
 # Copia il resto dei file del progetto
 COPY . .

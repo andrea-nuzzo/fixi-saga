@@ -1,0 +1,71 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+   binaryTargets = ["native", "linux-musl-arm64-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Users {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  password  String
+  role      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Customers {
+  id            Int       @id @default(autoincrement())
+  companyName   String?
+  typeBusiness  String?
+  fiscalCodeCeo String?
+  vatNumber     String
+  address       String?
+  postcode      String?
+  municipality  String?
+  province      String?
+  phone         String?
+  mobile        String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  machines      Machines[]
+}
+
+model Machines {
+  id                   Int              @id @default(autoincrement())
+  customerId           Int?
+  customer             Customers?        @relation(fields: [customerId], references: [id])
+  model                String?
+  serialNumber         String
+  activationDate       DateTime?
+  lastVerificationDate DateTime?
+  dgfeReplacementDate  DateTime?
+  contract             Boolean?
+  typeContract         String?
+  contractMonths       Int?
+  lastResetNumber      BigInt?
+  lastResetDate        DateTime?
+  qrCode               String?
+  lottery              Boolean
+  createdAt            DateTime         @default(now())
+  updatedAt            DateTime         @updatedAt
+  interventations      Interventions[]
+}
+
+model Interventions {
+  id                      Int       @id @default(autoincrement())
+  machineId               Int
+  machine                 Machines   @relation(fields: [machineId], references: [id])
+  openingIntervention     DateTime?
+  closureIntervention     DateTime?
+  descriptionIntervention String?
+  replacedParts           String?
+  createdAt               DateTime  @default(now())
+  updatedAt               DateTime  @updatedAt
+}
